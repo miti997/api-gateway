@@ -8,9 +8,9 @@ WORKDIR /usr/local/src
 COPY . .
 
 # Compile code
-# RUN go build -o /usr/local/bin/server/server main.go
+# RUN go build -o /usr/local/bin/gateway/gateway main.go
 
 # Set the default command to run the compiled binary
-# CMD ["/usr/local/bin/server/server"]
+# CMD ["/usr/local/bin/gateway/gateway"]
 
-CMD ["sleep", "infinity"]
+CMD ["tail", "-f", "/dev/null"]
