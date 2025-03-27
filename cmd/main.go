@@ -15,7 +15,6 @@ func main() {
 
 	fmt.Println("API Gateway is starting...")
 
-	// Start the server
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		log.Fatal("Error starting the server: ", err)
