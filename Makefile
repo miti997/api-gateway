@@ -17,3 +17,7 @@ test:
 
 test-v:
 	go test ./... -v
+
+enter:
+	$(eval CONTAINER_NAME=$(shell docker-compose ps -q gateway))
+	docker exec -it $(CONTAINER_NAME) /bin/bash
