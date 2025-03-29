@@ -2,21 +2,26 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
+
+	"github.com/miti997/api-gateway/internal/routing"
 )
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "API Gateway is running...")
-}
-
 func main() {
-	http.HandleFunc("/", handler)
+	sm := http.NewServeMux()
 
+	r, _ := routing.NewRoute("GET", "/test", "https://jsonplaceholder.typicode.com/posts")
+	sm.HandleFunc(r.GetPattern(), r.HandleRequest)
+
+	r, _ = routing.NewRoute("GET", "/test/{id}", "https://jsonplaceholder.typicode.com/posts/{id}")
+	sm.HandleFunc(r.GetPattern(), r.HandleRequest)
+
+	s := &http.Server{
+		Addr: ":8081",
+	}
+
+	s.Handler = sm
 	fmt.Println("API Gateway is starting...")
 
-	err := http.ListenAndServe(":8080", nil)
-	if err != nil {
-		log.Fatal("Error starting the server: ", err)
-	}
+	s.ListenAndServe()
 }

@@ -1,0 +1,12 @@
+[
+    {
+        "request": "GET",
+        "in": "/posts",
+        "out": "https://jsonplaceholder.typicode.com/posts/10"
+    },
+    {
+        "request": "GET",
+        "in": "/posts/{id}",
+        "out": "https://jsonplaceholder.typicode.com/posts/10"
+    }
+]
