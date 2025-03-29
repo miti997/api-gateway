@@ -111,7 +111,7 @@ func (r *Route) extractPathParams() {
 		paramsMap := make(map[string]struct{})
 		for _, match := range matches {
 			if len(match) > 1 {
-				paramsMap[match[1]] = struct{}{} // Extract parameter name and store in map
+				paramsMap[match[1]] = struct{}{}
 			}
 		}
 
@@ -127,7 +127,7 @@ func (r *Route) comparePathParams() error {
 	lenOut := len(r.pathParamsOut)
 
 	if lenIn != lenOut {
-		return fmt.Errorf("inbound URL has %d path parameters while outgoing URL has %d", lenIn, lenOut)
+		return fmt.Errorf("inbound URL has %d path parameters while outbound URL has %d", lenIn, lenOut)
 	}
 
 	for param := range r.pathParamsIn {
@@ -138,7 +138,7 @@ func (r *Route) comparePathParams() error {
 
 	for param := range r.pathParamsOut {
 		if _, exists := r.pathParamsIn[param]; !exists {
-			return fmt.Errorf("parameter %s exists in inbound URL but not in outbound URL", param)
+			return fmt.Errorf("parameter %s exists in outbound URL but not in inbound URL", param)
 		}
 	}
 
