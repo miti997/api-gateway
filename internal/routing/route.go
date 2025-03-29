@@ -150,14 +150,20 @@ func (r *Route) GetPattern() string {
 }
 
 func (r *Route) HandleRequest(w http.ResponseWriter, req *http.Request) {
-	outR, err := http.NewRequest(r.request, r.out, req.Body)
-	if err != nil {
-		log.Fatalf("Error creating request: %v", err)
-	}
-
 	for key := range r.pathParamsOut {
 		regex := regexp.MustCompile(`\{` + key + `\}`)
 		r.out = regex.ReplaceAllString(r.out, req.PathValue(key))
+	}
+
+	outR, err := http.NewRequest(r.request, r.out, req.Body)
+
+	if len(req.URL.Query()) > 0 {
+		r.out = r.out + "?" + req.URL.Query().Encode()
+	}
+
+	fmt.Println(r.out)
+	if err != nil {
+		log.Fatalf("Error creating request: %v", err)
 	}
 
 	for key, values := range req.Header {
