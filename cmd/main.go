@@ -17,10 +17,10 @@ func main() {
 	sm.HandleFunc(r.GetPattern(), r.HandleRequest)
 
 	s := &http.Server{
-		Addr: ":8081",
+		Addr:    ":8081",
+		Handler: sm,
 	}
 
-	s.Handler = sm
 	fmt.Println("API Gateway is starting...")
 
 	s.ListenAndServe()

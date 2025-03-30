@@ -13,7 +13,7 @@ func TestSetTimestamp(t *testing.T) {
 	e.SetTimestamp(time)
 
 	if time.Format("2006-01-02 15:04:05") != e.Timestamp {
-		t.Logf("Timestamp improperly set")
+		t.Fatalf("Timestamp improperly set")
 	}
 
 }
@@ -25,11 +25,11 @@ func TestSetIPSuccess(t *testing.T) {
 	err := e.SetIP(ip)
 
 	if err != nil {
-		t.Logf("Failed to set ip: %s", err)
+		t.Fatalf("Failed to set ip: %s", err)
 	}
 
 	if e.IP != ip {
-		t.Logf("Ip not properly set")
+		t.Fatalf("Ip not properly set")
 	}
 }
 
@@ -41,7 +41,7 @@ func TestSetIPFail(t *testing.T) {
 	err := e.SetIP(ip)
 
 	if err == nil {
-		t.Logf("IP was set but it shouldn't have been")
+		t.Fatalf("IP was set but it shouldn't have been")
 	}
 }
 func TestSetLevel(t *testing.T) {
@@ -50,7 +50,7 @@ func TestSetLevel(t *testing.T) {
 	e.SetLevel(INFO)
 
 	if e.Level != INFO {
-		t.Logf("Level improperly set")
+		t.Fatalf("Level improperly set")
 	}
 
 }
@@ -62,7 +62,7 @@ func TestSetRequest(t *testing.T) {
 	e.SetRequest(r)
 
 	if e.Request != r {
-		t.Logf("Request improperly set")
+		t.Fatalf("Request improperly set")
 	}
 
 }
@@ -73,7 +73,7 @@ func TestSetPath(t *testing.T) {
 	e.SetPath(p)
 
 	if e.PathIn != p {
-		t.Logf("In path set improperly")
+		t.Fatalf("In path set improperly")
 	}
 }
 
@@ -84,7 +84,7 @@ func TestSetPathPut(t *testing.T) {
 	e.SetPathOut(p)
 
 	if e.PathOut != p {
-		t.Logf("Out path set improperly")
+		t.Fatalf("Out path set improperly")
 	}
 }
 
@@ -95,7 +95,7 @@ func TestSetStatusCode(t *testing.T) {
 	e.SetStatusCode(s)
 
 	if e.StatusCode != s {
-		t.Logf("Statuc code set improperly")
+		t.Fatalf("Statuc code set improperly")
 	}
 }
 func TestSetMessage(t *testing.T) {
@@ -105,7 +105,7 @@ func TestSetMessage(t *testing.T) {
 	e.SetMessage(m)
 
 	if e.Message != m {
-		t.Logf("Message set improperly")
+		t.Fatalf("Message set improperly")
 	}
 }
 func TestSetLatency(t *testing.T) {
@@ -119,6 +119,6 @@ func TestSetLatency(t *testing.T) {
 
 	var expectedLatency = 1000
 	if e.Latency != int64(expectedLatency) {
-		t.Logf("Expected Latency %v, but got %v", expectedLatency, e.Latency)
+		t.Fatalf("Expected Latency %v, but got %v", expectedLatency, e.Latency)
 	}
 }

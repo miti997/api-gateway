@@ -8,6 +8,8 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
+
+	"github.com/miti997/api-gateway/internal/logging"
 )
 
 type RouteInterface interface {
@@ -20,6 +22,7 @@ type Route struct {
 	out           string
 	pathParamsIn  map[string]struct{}
 	pathParamsOut map[string]struct{}
+	logger        *logging.Logger
 }
 
 const (
@@ -30,10 +33,11 @@ const (
 	delete = "DELETE"
 )
 
-func NewRoute(request string, in string, out string) (*Route, error) {
+func NewRoute(request string, in string, out string, l *logging.Logger) (*Route, error) {
 	r := &Route{}
 
 	err := r.setRequest(request)
+	r.logger = l
 
 	if err != nil {
 		return nil, err

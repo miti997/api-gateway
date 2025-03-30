@@ -1,3 +1,5 @@
 config/*
+logs/*
 
 !config/*.example
+!*.gitkeep
