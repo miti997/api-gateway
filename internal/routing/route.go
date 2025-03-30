@@ -161,7 +161,6 @@ func (r *Route) HandleRequest(w http.ResponseWriter, req *http.Request) {
 		r.out = r.out + "?" + req.URL.Query().Encode()
 	}
 
-	fmt.Println(r.out)
 	if err != nil {
 		log.Fatalf("Error creating request: %v", err)
 	}
