@@ -158,22 +158,26 @@ func (r *Route) HandleRequest(w http.ResponseWriter, req *http.Request) {
 	le := entry.NewDefaultLogEntry()
 
 	start := time.Now()
+
 	le.SetTimestamp(start)
 	le.SetRequest(r.request)
 	le.SetPath(r.in)
-	le.SetPathOut(r.out)
+
+	out := r.out
 	le.SetIP(req.RemoteAddr)
 
 	for key := range r.pathParamsOut {
 		regex := regexp.MustCompile(`\{` + key + `\}`)
-		r.out = regex.ReplaceAllString(r.out, req.PathValue(key))
+		out = regex.ReplaceAllString(out, req.PathValue(key))
 	}
 
-	outR, err := http.NewRequest(r.request, r.out, req.Body)
+	outR, err := http.NewRequest(r.request, out, req.Body)
 
 	if len(req.URL.Query()) > 0 {
-		r.out = r.out + "?" + req.URL.Query().Encode()
+		out = r.out + "?" + req.URL.Query().Encode()
 	}
+
+	le.SetPathOut(out)
 
 	logFatal := func(message string) {
 		le.SetLevel(entry.FATAL)

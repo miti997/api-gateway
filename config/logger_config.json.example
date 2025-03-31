@@ -1,5 +1,5 @@
 {
     "maxSizeMB": 1024,
-    "filePath": "/logs",
-    "fileName": "log.log"
+    "filePath": "./logs",
+    "fileName": "log"
 }

@@ -49,10 +49,12 @@ func (rc *RoutesConfig) Load(configPath string) error {
 		return fmt.Errorf("could not read routes config file: %v", err)
 	}
 
-	err = json.Unmarshal(data, rc)
-	if err != nil {
+	var routes []Route
+	if err := json.Unmarshal(data, &routes); err != nil {
 		return fmt.Errorf("could not parse routes config file: %v", err)
 	}
+
+	rc.Routes = routes
 	return nil
 }
 

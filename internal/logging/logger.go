@@ -62,8 +62,11 @@ func (l *DefaultLogger) rotateLogFile() error {
 			return fmt.Errorf("error creating temporary log file: %v", err)
 		}
 	} else {
-		timestamp := time.Now().Format("20060102_150405")
-		logFilePath = filepath.Join(l.filePath, fmt.Sprintf("%s_%s.log", l.fileName, timestamp))
+		if err := os.MkdirAll(l.filePath, os.ModePerm); err != nil {
+			return fmt.Errorf("error creating log directory: %v", err)
+		}
+
+		logFilePath = filepath.Join(l.filePath, fmt.Sprintf("%s_%s.log", l.fileName, time.Now().Format("20060102_150405")))
 		l.logFile, err = os.OpenFile(logFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
 			return fmt.Errorf("error opening log file: %v", err)

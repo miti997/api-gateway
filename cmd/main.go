@@ -7,11 +7,15 @@ import (
 )
 
 func main() {
-	b, err := bootstrap.NewDefaultBootstraper("/config/config.json", "/config/routing.json", "/config/logger_config.json")
+	b, err := bootstrap.NewDefaultBootstraper("./config/config.json", "./config/routing.json", "./config/logger_config.json")
 
 	if err != nil {
 		log.Fatalf("Could not create bootstrapper: %v", err)
 	}
 
-	b.Bootstrap()
+	err = b.Bootstrap()
+
+	if err != nil {
+		log.Fatalf("Could not start server: %v", err)
+	}
 }

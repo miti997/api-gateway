@@ -2,11 +2,11 @@
     {
         "request": "GET",
         "in": "/posts",
-        "out": "https://jsonplaceholder.typicode.com/posts/10"
+        "out": "https://jsonplaceholder.typicode.com/posts"
     },
     {
         "request": "GET",
         "in": "/posts/{id}",
-        "out": "https://jsonplaceholder.typicode.com/posts/10"
+        "out": "https://jsonplaceholder.typicode.com/posts/{id}"
     }
 ]

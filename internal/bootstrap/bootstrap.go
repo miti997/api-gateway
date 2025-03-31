@@ -47,16 +47,26 @@ func NewDefaultBootstraper(cfp string, rfp string, lcfp string) (*DefaultBootstr
 	}, nil
 }
 
-func (b *DefaultBootstraper) Bootstrap() {
+func (b *DefaultBootstraper) Bootstrap() error {
 	sm := http.NewServeMux()
 
-	l, _ := logging.NewDefaultLogger(b.loggerConfig.FilePath, b.loggerConfig.FileName, b.loggerConfig.MaxSizeMB)
+	l, e := logging.NewDefaultLogger(b.loggerConfig.FilePath, b.loggerConfig.FileName, b.loggerConfig.MaxSizeMB)
+
+	if e != nil {
+		return e
+	}
 
 	for _, route := range b.routesConfig.Routes {
-		r, _ := routing.NewRoute(route.Request, route.In, route.Out, l)
+		r, e := routing.NewRoute(route.Request, route.In, route.Out, l)
+		if e != nil {
+			return e
+		}
 		sm.HandleFunc(r.GetPattern(), r.HandleRequest)
 	}
 
+	sm.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, "Hello, World!")
+	})
 	s := &http.Server{
 		Addr:    b.serverConfig.Address,
 		Handler: sm,
@@ -65,4 +75,6 @@ func (b *DefaultBootstraper) Bootstrap() {
 	fmt.Println("API Gateway is starting...")
 
 	s.ListenAndServe()
+
+	return nil
 }
