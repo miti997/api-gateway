@@ -37,6 +37,7 @@ func TestLog(t *testing.T) {
 	logger := &DefaultLogger{
 		logFile:   tempFile,
 		formatter: &TestFormatter{},
+		useTemp:   true,
 	}
 
 	entry := &TestEntry{}

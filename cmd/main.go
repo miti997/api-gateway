@@ -1,30 +1,17 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
+	"log"
 
-	"github.com/miti997/api-gateway/internal/logging"
-	"github.com/miti997/api-gateway/internal/routing"
+	"github.com/miti997/api-gateway/internal/bootstrap"
 )
 
 func main() {
-	sm := http.NewServeMux()
+	b, err := bootstrap.NewDefaultBootstraper("/config/config.json", "/config/routing.json", "/config/logger_config.json")
 
-	l, _ := logging.NewDefaultLogger("/logs/", "log.log", 1)
-
-	r, _ := routing.NewRoute("GET", "/test", "https://jsonplaceholder.typicode.com/posts", l)
-	sm.HandleFunc(r.GetPattern(), r.HandleRequest)
-
-	r, _ = routing.NewRoute("GET", "/test/{id}", "https://jsonplaceholder.typicode.com/posts/{id}", l)
-	sm.HandleFunc(r.GetPattern(), r.HandleRequest)
-
-	s := &http.Server{
-		Addr:    ":8081",
-		Handler: sm,
+	if err != nil {
+		log.Fatalf("Could not create bootstrapper: %v", err)
 	}
 
-	fmt.Println("API Gateway is starting...")
-
-	s.ListenAndServe()
+	b.Bootstrap()
 }
