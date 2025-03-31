@@ -3,13 +3,14 @@ package routing
 import (
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/miti997/api-gateway/internal/logging"
+	"github.com/miti997/api-gateway/internal/logging/entry"
 )
 
 type RouteInterface interface {
@@ -22,7 +23,7 @@ type Route struct {
 	out           string
 	pathParamsIn  map[string]struct{}
 	pathParamsOut map[string]struct{}
-	logger        *logging.Logger
+	logger        logging.Logger
 }
 
 const (
@@ -33,7 +34,7 @@ const (
 	delete = "DELETE"
 )
 
-func NewRoute(request string, in string, out string, l *logging.Logger) (*Route, error) {
+func NewRoute(request string, in string, out string, l logging.Logger) (*Route, error) {
 	r := &Route{}
 
 	err := r.setRequest(request)
@@ -154,6 +155,15 @@ func (r *Route) GetPattern() string {
 }
 
 func (r *Route) HandleRequest(w http.ResponseWriter, req *http.Request) {
+	le := entry.NewDefaultLogEntry()
+
+	start := time.Now()
+	le.SetTimestamp(start)
+	le.SetRequest(r.request)
+	le.SetPath(r.in)
+	le.SetPathOut(r.out)
+	le.SetIP(req.RemoteAddr)
+
 	for key := range r.pathParamsOut {
 		regex := regexp.MustCompile(`\{` + key + `\}`)
 		r.out = regex.ReplaceAllString(r.out, req.PathValue(key))
@@ -165,8 +175,19 @@ func (r *Route) HandleRequest(w http.ResponseWriter, req *http.Request) {
 		r.out = r.out + "?" + req.URL.Query().Encode()
 	}
 
+	logFatal := func(message string) {
+		le.SetLevel(entry.FATAL)
+		le.SetMessage(message)
+		le.SetStatusCode(500)
+		le.SetLatency(start, time.Now())
+
+		r.logger.Log(le)
+	}
+
 	if err != nil {
-		log.Fatalf("Error creating request: %v", err)
+		logFatal(fmt.Sprintf("Error creating request: %v", err))
+
+		return
 	}
 
 	for key, values := range req.Header {
@@ -177,9 +198,13 @@ func (r *Route) HandleRequest(w http.ResponseWriter, req *http.Request) {
 
 	client := &http.Client{}
 	resp, err := client.Do(outR)
+
 	if err != nil {
-		log.Fatalf("Error making request: %v", err)
+		logFatal(fmt.Sprintf("Error making request: %s", err))
+
+		return
 	}
+
 	defer resp.Body.Close()
 
 	for key, values := range resp.Header {
@@ -188,10 +213,32 @@ func (r *Route) HandleRequest(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	w.WriteHeader(resp.StatusCode)
-
-	_, err = io.Copy(w, resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalf("Error copying response body: %v", err)
+		logFatal(fmt.Sprintf("Error reading response body: %v", err))
+
+		return
 	}
+
+	bodyString := string(bodyBytes)
+
+	w.WriteHeader(resp.StatusCode)
+	le.SetStatusCode(resp.StatusCode)
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		le.SetLevel(entry.INFO)
+		le.SetMessage("Success")
+	} else {
+		le.SetLevel(entry.ERROR)
+		le.SetMessage(bodyString)
+	}
+
+	_, err = w.Write(bodyBytes)
+	if err != nil {
+		logFatal(fmt.Sprintf("Error writing response body: %v", err))
+
+		return
+	}
+
+	r.logger.Log(le)
 }

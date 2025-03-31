@@ -5,14 +5,22 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/miti997/api-gateway/internal/logging/entry"
 )
+
+type TestLogger struct{}
+
+func (l *TestLogger) Log(e entry.LogEntry) {
+
+}
 
 func TestNewRouteSuccess(t *testing.T) {
 	request := get
 	in := "/testincoming/{id}"
 	out := "/testoutgoing/{id}"
 
-	r, err := NewRoute(request, in, out)
+	r, err := NewRoute(request, in, out, &TestLogger{})
 
 	if err != nil {
 		t.Fatalf("Could not generate new Route: %s", err)
@@ -36,7 +44,7 @@ func TestNewRouteFailRequest(t *testing.T) {
 	in := "/testincoming/{id}"
 	out := "/testoutgoing/{id}"
 
-	_, err := NewRoute(request, in, out)
+	_, err := NewRoute(request, in, out, &TestLogger{})
 
 	if err == nil {
 		t.Fatalf("Route created sucessfully but it shouldn't have been")
@@ -48,7 +56,7 @@ func TestNewRouteFailIn(t *testing.T) {
 	in := "/test incoming/{id}"
 	out := "/testoutgoing/{id}"
 
-	_, err := NewRoute(request, in, out)
+	_, err := NewRoute(request, in, out, &TestLogger{})
 
 	if err == nil {
 		t.Fatalf("Route created sucessfully but it shouldn't have been")
@@ -60,7 +68,7 @@ func TestNewRouteFailOut(t *testing.T) {
 	in := "/testincoming/{id}"
 	out := "/test outgoing/{id}"
 
-	_, err := NewRoute(request, in, out)
+	_, err := NewRoute(request, in, out, &TestLogger{})
 
 	if err == nil {
 		t.Fatalf("Route created sucessfully but it shouldn't have been")
@@ -72,7 +80,7 @@ func TestNewRouteFailPathParams(t *testing.T) {
 	in := "/testincoming/{id}"
 	out := "/testoutgoing/{id}/{wrong}"
 
-	_, err := NewRoute(request, in, out)
+	_, err := NewRoute(request, in, out, &TestLogger{})
 
 	if err == nil {
 		t.Fatalf("Route created sucessfully but it shouldn't have been")
@@ -90,6 +98,7 @@ func TestRouteHandling(t *testing.T) {
 	r := &Route{
 		request: get,
 		out:     mockServer.URL + "/out/{id}",
+		logger:  &TestLogger{},
 	}
 
 	req := httptest.NewRequest("GET", "/somepath", nil)

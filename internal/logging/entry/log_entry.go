@@ -18,15 +18,15 @@ type LogEntry interface {
 }
 
 type DefaultLogEntry struct {
-	Timestamp  string `json:"timestamp"`
-	IP         string `json:"ip"`
-	Level      string `json:"level"`
-	Request    string `json:"request"`
-	PathIn     string `json:"path_in"`
-	PathOut    string `json:"path_out"`
-	StatusCode int    `json:"status_code"`
-	Message    string `json:"message"`
-	Latency    int64  `json:"latency"`
+	Timestamp  string `json:"timestamp,omitempty"`
+	IP         string `json:"ip,omitempty"`
+	Level      string `json:"level,omitempty"`
+	Request    string `json:"request,omitempty"`
+	PathIn     string `json:"path_in,omitempty"`
+	PathOut    string `json:"path_out,omitempty"`
+	StatusCode int    `json:"status_code,omitempty"`
+	Message    string `json:"message,omitempty"`
+	Latency    int64  `json:"latency,omitempty"`
 }
 
 func NewDefaultLogEntry() *DefaultLogEntry {

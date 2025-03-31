@@ -4,13 +4,16 @@ import (
 	"fmt"
 	"os"
 	"sync"
-	"time"
 
 	"github.com/miti997/api-gateway/internal/logging/entry"
 	"github.com/miti997/api-gateway/internal/logging/formatter"
 )
 
-type Logger struct {
+type Logger interface {
+	Log(entry.LogEntry)
+}
+
+type DefaultLogger struct {
 	maxSize   int
 	logFile   *os.File
 	fileName  string
@@ -18,7 +21,7 @@ type Logger struct {
 	formatter formatter.Formatter
 }
 
-func NewLogger(filePath string, fileName string, ms int) (*Logger, error) {
+func NewDefaultLogger(filePath string, fileName string, ms int) (*DefaultLogger, error) {
 	var logFile *os.File
 	var err error
 
@@ -36,7 +39,7 @@ func NewLogger(filePath string, fileName string, ms int) (*Logger, error) {
 		ms = 1
 	}
 
-	return &Logger{
+	return &DefaultLogger{
 		logFile:   logFile,
 		maxSize:   ms,
 		fileName:  fileName,
@@ -44,27 +47,14 @@ func NewLogger(filePath string, fileName string, ms int) (*Logger, error) {
 	}, nil
 }
 
-func (l *Logger) Close() error {
+func (l *DefaultLogger) Close() error {
 	return l.logFile.Close()
 }
 
-func (l *Logger) log(level string, ip string, r string, in string, out string, status int, start time.Time, message string) {
+func (l *DefaultLogger) Log(e entry.LogEntry) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
-	e := &entry.DefaultLogEntry{}
-
-	e.SetTimestamp(start)
-	e.SetLevel(level)
-	e.SetIP(ip)
-	e.SetRequest(r)
-	e.SetPath(in)
-	e.SetPathOut(out)
-	e.SetStatusCode(status)
-	e.SetLatency(start, time.Now())
-	e.SetMessage(message)
-
-	fmt.Println(e.Level)
 	log, err := l.formatter.Format(e)
 
 	if err != nil {

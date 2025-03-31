@@ -6,7 +6,7 @@ import (
 )
 
 func TestNewLogger(t *testing.T) {
-	l, err := NewLogger("test", "test_log", 0)
+	l, err := NewDefaultLogger("temp", "test_log", 0)
 
 	if err != nil {
 		t.Fatalf("Logger could not be initialized: %s", err)

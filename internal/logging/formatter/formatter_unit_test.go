@@ -8,6 +8,7 @@ import (
 type TestEntry struct {
 	Request string
 	Message string
+	Test    string `json:"Test,omitempty"`
 }
 
 func (e *TestEntry) SetTimestamp(t time.Time)              {}
@@ -29,7 +30,7 @@ func TestFormat(t *testing.T) {
 	f := JSONFormatter{}
 	expected := "{\"Request\":\"GET\",\"Message\":\"Success\"}"
 	result, err := f.Format(e)
-
+	t.Log(result)
 	if err != nil {
 		t.Fatalf("Failed to generate JSON")
 	}
