@@ -11,7 +11,7 @@ type Config interface {
 }
 
 type ServerConfig struct {
-	Address string `json:"address"`
+	Address string `json:"addr"`
 }
 
 type Route struct {
