@@ -1,5 +1,5 @@
 {
     "maxSizeMB": 1024,
-    "filePath": "./logs",
+    "filePath": "/usr/local/bin/gateway/logs",
     "fileName": "log"
 }

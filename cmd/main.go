@@ -7,7 +7,11 @@ import (
 )
 
 func main() {
-	b, err := bootstrap.NewDefaultBootstraper("./config/config.json", "./config/routing.json", "./config/logger_config.json")
+	b, err := bootstrap.NewDefaultBootstraper(
+		"/usr/local/bin/gateway/config/config.json",
+		"/usr/local/bin/gateway/config/routing.json",
+		"/usr/local/bin/gateway/config/logger_config.json",
+	)
 
 	if err != nil {
 		log.Fatalf("Could not create bootstrapper: %v", err)

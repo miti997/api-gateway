@@ -21,3 +21,7 @@ test-v:
 enter:
 	$(eval CONTAINER_NAME=$(shell docker-compose ps -q gateway))
 	docker exec -it $(CONTAINER_NAME) /bin/bash
+
+start:
+	$(eval CONTAINER_NAME=$(shell docker compose ps -q gateway))
+	docker exec -it $(CONTAINER_NAME) /usr/local/bin/gateway/gateway

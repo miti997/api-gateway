@@ -19,5 +19,5 @@ RUN go build -o /usr/local/bin/gateway/gateway /usr/local/src/cmd/main.go
 # Ensure the binary has executable permissions
 RUN chmod +x /usr/local/bin/gateway/gateway
 
-# Set the default command to run the compiled binary
-CMD ["/usr/local/bin/gateway/gateway"]
+#Keep container runing to have time to change configs
+CMD ["tail", "-f", "/dev/null"]
