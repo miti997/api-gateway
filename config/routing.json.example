@@ -8,5 +8,10 @@
         "request": "GET",
         "in": "/posts/{id}",
         "out": "https://jsonplaceholder.typicode.com/posts/{id}"
+    },
+    {
+        "request": "POST",
+        "in": "/posts",
+        "out": "https://jsonplaceholder.typicode.com/posts"
     }
 ]
