@@ -14,10 +14,11 @@ type LogEntry interface {
 	SetPath(string)
 	SetStatusCode(int)
 	SetMessage(string)
-	SetLatency(time.Time, time.Time)
+	SetLatency(time.Time)
 }
 
 type DefaultLogEntry struct {
+	startTime  time.Time
 	Timestamp  string `json:"timestamp,omitempty"`
 	IP         string `json:"ip,omitempty"`
 	Level      string `json:"level,omitempty"`
@@ -26,7 +27,7 @@ type DefaultLogEntry struct {
 	PathOut    string `json:"path_out,omitempty"`
 	StatusCode int    `json:"status_code,omitempty"`
 	Message    string `json:"message,omitempty"`
-	Latency    int64  `json:"latency,omitempty"`
+	Latency    string `json:"latency,omitempty"`
 }
 
 func NewDefaultLogEntry() *DefaultLogEntry {
@@ -34,6 +35,7 @@ func NewDefaultLogEntry() *DefaultLogEntry {
 }
 
 func (e *DefaultLogEntry) SetTimestamp(t time.Time) {
+	e.startTime = t
 	e.Timestamp = t.Format("2006-01-02 15:04:05")
 }
 
@@ -57,8 +59,9 @@ func (e *DefaultLogEntry) SetStatusCode(s int) {
 func (e *DefaultLogEntry) SetMessage(m string) {
 	e.Message = m
 }
-func (e *DefaultLogEntry) SetLatency(st time.Time, et time.Time) {
-	e.Latency = et.Sub(st).Milliseconds()
+func (e *DefaultLogEntry) SetLatency(st time.Time) {
+	duration := time.Since(e.startTime)
+	e.Latency = duration.String()
 }
 func (e *DefaultLogEntry) SetPath(p string) {
 	e.PathIn = p

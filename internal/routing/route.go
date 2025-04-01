@@ -183,7 +183,7 @@ func (r *Route) HandleRequest(w http.ResponseWriter, req *http.Request) {
 		le.SetLevel(entry.FATAL)
 		le.SetMessage(message)
 		le.SetStatusCode(500)
-		le.SetLatency(start, time.Now())
+		le.SetLatency(start)
 
 		r.logger.Log(le)
 	}

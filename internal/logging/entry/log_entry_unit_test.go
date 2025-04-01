@@ -112,13 +112,20 @@ func TestSetLatency(t *testing.T) {
 	e := &DefaultLogEntry{}
 
 	startTime := time.Now()
+	e.SetTimestamp(startTime)
 
-	endTime := startTime.Add(1 * time.Second)
+	time.Sleep(1 * time.Second)
+	e.SetLatency(time.Now())
 
-	e.SetLatency(startTime, endTime)
+	latencyDuration, err := time.ParseDuration(e.Latency)
+	if err != nil {
+		t.Fatalf("Error parsing latency string: %v", err)
+	}
 
-	var expectedLatency = 1000
-	if e.Latency != int64(expectedLatency) {
-		t.Fatalf("Expected Latency %v, but got %v", expectedLatency, e.Latency)
+	expected := time.Second
+	tolerance := 50 * time.Millisecond
+
+	if latencyDuration < expected-tolerance || latencyDuration > expected+tolerance {
+		t.Fatalf("Expected Latency around 1s, but got %v", latencyDuration)
 	}
 }
