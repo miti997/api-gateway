@@ -244,5 +244,6 @@ func (r *Route) HandleRequest(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	le.SetLatency(start)
 	r.logger.Log(le)
 }

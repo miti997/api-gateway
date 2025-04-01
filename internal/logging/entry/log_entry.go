@@ -18,7 +18,6 @@ type LogEntry interface {
 }
 
 type DefaultLogEntry struct {
-	startTime  time.Time
 	Timestamp  string `json:"timestamp,omitempty"`
 	IP         string `json:"ip,omitempty"`
 	Level      string `json:"level,omitempty"`
@@ -35,7 +34,6 @@ func NewDefaultLogEntry() *DefaultLogEntry {
 }
 
 func (e *DefaultLogEntry) SetTimestamp(t time.Time) {
-	e.startTime = t
 	e.Timestamp = t.Format("2006-01-02 15:04:05")
 }
 
@@ -60,7 +58,7 @@ func (e *DefaultLogEntry) SetMessage(m string) {
 	e.Message = m
 }
 func (e *DefaultLogEntry) SetLatency(st time.Time) {
-	duration := time.Since(e.startTime)
+	duration := time.Since(st)
 	e.Latency = duration.String()
 }
 func (e *DefaultLogEntry) SetPath(p string) {
